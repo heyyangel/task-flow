@@ -33,44 +33,33 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Task = void 0;
+exports.User = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const task_types_1 = require("../types/task.types");
-const TaskSchema = new mongoose_1.Schema({
-    userId: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    },
-    title: {
+const userSchema = new mongoose_1.Schema({
+    name: {
         type: String,
         required: true,
         trim: true,
     },
-    description: {
+    email: {
         type: String,
+        required: true,
+        unique: true,
         trim: true,
+        lowercase: true,
     },
-    dueDate: {
-        type: Date,
-    },
-    priority: {
+    password: {
         type: String,
-        enum: Object.values(task_types_1.TaskPriority),
-        default: task_types_1.TaskPriority.MEDIUM,
-    },
-    status: {
-        type: String,
-        enum: Object.values(task_types_1.TaskStatus),
-        default: task_types_1.TaskStatus.TODO,
+        required: true,
     },
 }, {
     timestamps: true,
 });
-// Add indexes for search and filtering
-TaskSchema.index({ title: "text" });
-TaskSchema.index({ status: 1 });
-TaskSchema.index({ priority: 1 });
-TaskSchema.index({ dueDate: 1 });
-TaskSchema.index({ createdAt: 1 });
-exports.Task = mongoose_1.default.model("Task", TaskSchema);
+// Remove password from JSON serialization
+userSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        delete ret.password;
+        return ret;
+    },
+});
+exports.User = mongoose_1.default.model('User', userSchema);

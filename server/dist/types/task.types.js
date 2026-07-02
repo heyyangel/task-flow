@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTasksQuerySchema = exports.updateTaskSchema = exports.createTaskSchema = exports.TaskStatus = exports.TaskPriority = void 0;
+exports.aiSuggestSchema = exports.getTasksQuerySchema = exports.updateTaskSchema = exports.createTaskSchema = exports.TaskStatus = exports.TaskPriority = void 0;
 const zod_1 = require("zod");
 var TaskPriority;
 (function (TaskPriority) {
@@ -44,5 +44,10 @@ exports.getTasksQuerySchema = zod_1.z.object({
         priority: zod_1.z.nativeEnum(TaskPriority).optional(),
         sortBy: zod_1.z.enum(["dueDate", "createdAt"]).optional(),
         sortOrder: zod_1.z.enum(["asc", "desc"]).optional(),
+    }),
+});
+exports.aiSuggestSchema = zod_1.z.object({
+    body: zod_1.z.object({
+        title: zod_1.z.string().min(1, "Title is required").max(100),
     }),
 });

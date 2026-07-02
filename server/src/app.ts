@@ -2,6 +2,7 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 
 import taskRoutes from './routes/task.routes';
 import authRoutes from './routes/auth.routes';
@@ -24,6 +25,15 @@ app.use('/api/tasks', taskRoutes);
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy' });
 });
+
+// Serve frontend in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../../client/dist')));
+
+  app.get('*', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../../client/dist/index.html'));
+  });
+}
 
 // 404 Handler
 app.use((req: Request, res: Response, next: NextFunction) => {

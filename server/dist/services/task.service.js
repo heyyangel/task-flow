@@ -7,8 +7,8 @@ class TaskService {
         const task = new task_model_1.Task(taskData);
         return await task.save();
     }
-    async getTasks(page = 1, limit = 10, search, status, priority, sortBy = "createdAt", sortOrder = "desc") {
-        const query = {};
+    async getTasks(userId, page = 1, limit = 10, search, status, priority, sortBy = "createdAt", sortOrder = "desc") {
+        const query = { userId };
         if (search) {
             query.$text = { $search: search };
         }
@@ -36,17 +36,17 @@ class TaskService {
             },
         };
     }
-    async getTaskById(id) {
-        return await task_model_1.Task.findById(id);
+    async getTaskById(id, userId) {
+        return await task_model_1.Task.findOne({ _id: id, userId });
     }
-    async updateTask(id, updateData) {
-        return await task_model_1.Task.findByIdAndUpdate(id, updateData, {
+    async updateTask(id, userId, updateData) {
+        return await task_model_1.Task.findOneAndUpdate({ _id: id, userId }, updateData, {
             new: true,
             runValidators: true,
         });
     }
-    async deleteTask(id) {
-        return await task_model_1.Task.findByIdAndDelete(id);
+    async deleteTask(id, userId) {
+        return await task_model_1.Task.findOneAndDelete({ _id: id, userId });
     }
 }
 exports.TaskService = TaskService;
